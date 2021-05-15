@@ -31,6 +31,9 @@ public class S3Service {
     @Value("${bucket_name}")
     private String bucketName;
 
+    @Value("${folder_name}")
+    private String folderName;
+
     @Value("${access_key}")
     private String accessKey;
 
@@ -42,7 +45,7 @@ public class S3Service {
      * @throws Exception
      */
     @Async
-    public boolean putObject(String objectUrl) {
+    public String putObject(String objectUrl) {
 
         System.out.println("【開始】S3アップロード処理");
 
@@ -52,28 +55,34 @@ public class S3Service {
         // ファイルが読み込めること
         if (!targetFile.canRead()) {
             System.out.println("ファイルが読み込めません。");
-            return uploadResult;
+            throw new RuntimeException("ファイルが読み込ません。");
         }
 
         try (FileInputStream fis = new FileInputStream(targetFile);) {
             AmazonS3 s3Client = buildS3Client();
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(targetFile.length());
-            PutObjectRequest putRequest = new PutObjectRequest(bucketName, targetFile.getName(), fis, metadata);
+            PutObjectRequest putRequest = new PutObjectRequest(bucketName + "/" + folderName, targetFile.getName(), fis,
+                    metadata);
             // オブジェクトのACLを設定
             putRequest.setCannedAcl(CannedAccessControlList.PublicRead);
             // アップロード
             s3Client.putObject(putRequest);
-            uploadResult = true;
             System.out.println("S3アップロード処理完了；" + objectUrl);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("S3アップロード処理に失敗しました。");
         }
 
+        // オブジェクトURL作成
+        StringBuilder sb = new StringBuilder();
+        sb.append("https://").append(bucketName).append(".s3-ap-northeast-1.amazonaws.com/").append(folderName)
+                .append(targetFile.getName());
+
+        System.out.println("オブジェクトURL：" + sb.toString());
         System.out.println("【終了】S3アップロード処理");
 
-        return uploadResult;
+        return sb.toString();
     }
 
     private AmazonS3 buildS3Client() {
