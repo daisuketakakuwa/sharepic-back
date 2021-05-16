@@ -61,7 +61,8 @@ public class CardService {
             CardForHomeResponse response = new CardForHomeResponse();
             response.setTag(tagEntity.getName());
             // タグに紐づく写真を１枚選択
-            response.setSrc(tagEntity.getCardTagRelations().get(0).getCard().getSrc());
+            int index = tagEntity.getCardTagRelations().size() - 1;
+            response.setSrc(tagEntity.getCardTagRelations().get(index).getCard().getSrc());
             responses.add(response);
         }
         return responses;
@@ -97,7 +98,7 @@ public class CardService {
 
         // result1とresult2の両方に含まれるもの
         List<CardEntity> combinedResult = new ArrayList<>();
-        if (NO_TAG.equals(tag)) {
+        if (tag.isEmpty() || NO_TAG.equals(tag)) {
             combinedResult.addAll(resultList2);
         } else {
             for (CardEntity card : resultList1) {
