@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -19,7 +20,7 @@ public class TagEntity extends BaseEntity implements java.io.Serializable {
 
     private String name;
 
-    private List<CardTagRelEntity> cardTagRelEntities;
+    private List<CardTagRelEntity> cardTagRelations;
 
     @Id
     @Column(name = "id", unique = true, nullable = false, length = 36)
@@ -39,13 +40,13 @@ public class TagEntity extends BaseEntity implements java.io.Serializable {
         this.name = name;
     }
 
-    @OneToMany(mappedBy = "tag")
-    public List<CardTagRelEntity> getCardTagRelEntities() {
-        return cardTagRelEntities;
+    @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY)
+    public List<CardTagRelEntity> getCardTagRelations() {
+        return cardTagRelations;
     }
 
-    public void setCardTagRelEntities(List<CardTagRelEntity> cardTagRelEntities) {
-        this.cardTagRelEntities = cardTagRelEntities;
+    public void setCardTagRelations(List<CardTagRelEntity> cardTagRelations) {
+        this.cardTagRelations = cardTagRelations;
     }
 
 }

@@ -5,10 +5,8 @@ import java.io.FileInputStream;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -49,7 +47,6 @@ public class S3Service {
 
         System.out.println("【開始】S3アップロード処理");
 
-        boolean uploadResult = false;
         File targetFile = new File(objectUrl);
 
         // ファイルが読み込めること
@@ -77,7 +74,7 @@ public class S3Service {
         // オブジェクトURL作成
         StringBuilder sb = new StringBuilder();
         sb.append("https://").append(bucketName).append(".s3-ap-northeast-1.amazonaws.com/").append(folderName)
-                .append(targetFile.getName());
+                .append(File.separator).append(targetFile.getName());
 
         System.out.println("オブジェクトURL：" + sb.toString());
         System.out.println("【終了】S3アップロード処理");

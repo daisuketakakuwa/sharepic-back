@@ -1,10 +1,11 @@
 package jp.sharepic.sharepicback.domains.card;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -22,11 +23,11 @@ public class CardEntity extends BaseEntity implements java.io.Serializable {
 
     private String description;
 
-    private LocalDateTime postDate;
+    private LocalDate postDate;
 
     private String postUser;
 
-    private List<CardTagRelEntity> cardTagRelEntities;
+    private List<CardTagRelEntity> cardTagRelations;
 
     @Id
     @Column(name = "id", unique = true, nullable = false, length = 36)
@@ -57,11 +58,11 @@ public class CardEntity extends BaseEntity implements java.io.Serializable {
     }
 
     @Column(name = "post_date")
-    public LocalDateTime getPostDate() {
+    public LocalDate getPostDate() {
         return postDate;
     }
 
-    public void setPostDate(LocalDateTime postDate) {
+    public void setPostDate(LocalDate postDate) {
         this.postDate = postDate;
     }
 
@@ -74,13 +75,13 @@ public class CardEntity extends BaseEntity implements java.io.Serializable {
         this.postUser = postUser;
     }
 
-    @OneToMany(mappedBy = "card")
-    public List<CardTagRelEntity> getCardTagRelEntities() {
-        return cardTagRelEntities;
+    @OneToMany(mappedBy = "card", fetch = FetchType.LAZY)
+    public List<CardTagRelEntity> getCardTagRelations() {
+        return cardTagRelations;
     }
 
-    public void setCardTagRelEntities(List<CardTagRelEntity> cardTagRelEntities) {
-        this.cardTagRelEntities = cardTagRelEntities;
+    public void setCardTagRelations(List<CardTagRelEntity> cardTagRelations) {
+        this.cardTagRelations = cardTagRelations;
     }
 
 }

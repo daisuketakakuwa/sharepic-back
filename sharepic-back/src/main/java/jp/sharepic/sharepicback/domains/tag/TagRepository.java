@@ -10,7 +10,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TagRepository extends JpaRepository<TagEntity, String> {
 
-    @Query(value = "SELECT DISTINCT tag FROM TagEntity tag WHERE tag.name = :name")
+    @Query(value = "SELECT DISTINCT tag FROM TagEntity tag " + "LEFT JOIN tag.cardTagRelations relations "
+            + "LEFT JOIN relations.card card " + "WHERE tag.name = :name ")
     public Optional<TagEntity> findByName(@Param("name") String name);
 
 }
