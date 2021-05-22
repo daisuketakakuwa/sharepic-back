@@ -2,6 +2,7 @@ package jp.sharepic.sharepicback;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,6 +21,9 @@ import jp.sharepic.sharepicback.domains.jwt.JwtTokenFilter;
 
 @EnableWebSecurity
 public class AuthConfiguration extends WebSecurityConfigurerAdapter {
+
+    @Value("${domain}")
+    String domain;
 
     @Autowired
     PasswordEncoder encoder;
@@ -67,7 +71,7 @@ public class AuthConfiguration extends WebSecurityConfigurerAdapter {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedHeader(CorsConfiguration.ALL);
         config.addAllowedMethod(CorsConfiguration.ALL);
-        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://" + domain);
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

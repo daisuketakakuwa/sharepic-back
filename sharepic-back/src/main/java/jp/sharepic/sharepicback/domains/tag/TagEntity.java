@@ -32,6 +32,7 @@ public class TagEntity extends BaseEntity implements java.io.Serializable {
         this.id = id;
     }
 
+    @Column(name = "name")
     public String getName() {
         return name;
     }
