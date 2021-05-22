@@ -37,4 +37,5 @@ public class UserInfo extends User {
         }
         return authorities;
     }
+
 }

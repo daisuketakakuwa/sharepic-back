@@ -3,6 +3,7 @@ package jp.sharepic.sharepicback.domains.card;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,7 @@ import jp.sharepic.sharepicback.domains.card.request.CardUploadRequest;
 import jp.sharepic.sharepicback.domains.card.response.CardForAccountResponse;
 import jp.sharepic.sharepicback.domains.card.response.CardForHomeResponse;
 import jp.sharepic.sharepicback.domains.card.response.CardResponse;
+import jp.sharepic.sharepicback.domains.user.UserInfo;
 
 @RestController
 @RequestMapping("/card")
@@ -26,9 +28,9 @@ public class CardController {
     CardFactory cardFactory;
 
     @PutMapping("/upload")
-    public void uploadCard(@RequestBody CardUploadRequest req) {
+    public void uploadCard(@RequestBody CardUploadRequest req, @AuthenticationPrincipal UserInfo loginUser) {
         cardService.uploadCard(req.getSrc(), req.getExtension(), req.getTags(), req.getDescription(),
-                req.getPostUser());
+                loginUser.getName());
     }
 
     @GetMapping("/tags")
@@ -42,10 +44,9 @@ public class CardController {
     }
 
     @GetMapping("/account")
-    public CardForAccountResponse account() {
-        // ログイン中のユーザー名を@AuthenticationPrincipalから取得する
-        String username = "testuser";
-        return cardService.account(username);
+    public CardForAccountResponse account(@AuthenticationPrincipal UserInfo loginUser) {
+        System.out.println(loginUser.getName());
+        return cardService.account(loginUser.getName());
     }
 
     @GetMapping("/search")

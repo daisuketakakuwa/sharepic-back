@@ -42,6 +42,7 @@ public class JwtTokenProvider implements TokenProvider {
     public Authentication buildAuthentication(String token) {
         // PrincipalとRolesが欲しい。
         Jws<Claims> claims = parseClaimsJws(token);
+
         UserDetails userDetails = new UserInfo("id", claims.getBody().get("name").toString(), "password",
                 claims.getBody().get("role").toString().split(","));
 
@@ -74,9 +75,9 @@ public class JwtTokenProvider implements TokenProvider {
     }
 
     private Map<String, String> createUserDetailsMap(Authentication auth) {
-        UserDetails userDetail = (UserInfo) auth.getPrincipal();
+        UserInfo userDetail = (UserInfo) auth.getPrincipal();
         Map<String, String> map = new HashMap<>();
-        map.put("name", userDetail.getUsername());
+        map.put("name", userDetail.getName());
         return map;
     }
 
