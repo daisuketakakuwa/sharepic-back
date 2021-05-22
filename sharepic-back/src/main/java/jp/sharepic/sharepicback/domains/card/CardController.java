@@ -45,7 +45,6 @@ public class CardController {
 
     @GetMapping("/account")
     public CardForAccountResponse account(@AuthenticationPrincipal UserInfo loginUser) {
-        System.out.println(loginUser.getName());
         return cardService.account(loginUser.getName());
     }
 
