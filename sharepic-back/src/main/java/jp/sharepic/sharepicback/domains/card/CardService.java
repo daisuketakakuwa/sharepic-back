@@ -59,15 +59,14 @@ public class CardService {
     @Autowired
     S3Service s3Service;
 
-    public List<CardForHomeResponse> home() {
-        // タグ一覧を取得
-        List<TagEntity> tagEntities = tagRepository.findAll();
-        // 更新日付の降順でソート
-        Set<TagEntity> sortedEntities = new TreeSet<>(Comparator.comparing(TagEntity::getUpdatedDate).reversed());
-        sortedEntities.addAll(tagEntities);
+    public List<String> getTags() {
+        return getTagEntities().stream().map(TagEntity::getName).collect(Collectors.toList());
+    }
 
+    public List<CardForHomeResponse> home() {
+        Set<TagEntity> tagEntities = getTagEntities();
         List<CardForHomeResponse> responses = new ArrayList<>();
-        for (TagEntity tagEntity : sortedEntities) {
+        for (TagEntity tagEntity : tagEntities) {
             CardForHomeResponse response = new CardForHomeResponse();
             response.setTag(tagEntity.getName());
             // タグに紐づく写真を１枚選択
@@ -76,6 +75,16 @@ public class CardService {
             responses.add(response);
         }
         return responses;
+    }
+
+    private Set<TagEntity> getTagEntities() {
+        // タグ一覧を取得
+        List<TagEntity> tagEntities = tagRepository.findAll();
+        // 更新日付の降順でソート
+        Set<TagEntity> sortedEntities = new TreeSet<>(Comparator.comparing(TagEntity::getUpdatedDate).reversed());
+        sortedEntities.addAll(tagEntities);
+
+        return sortedEntities;
     }
 
     public CardForAccountResponse account(String username) {
@@ -90,10 +99,6 @@ public class CardService {
         // TODO お気に入り機能追加 お気に入りテーブル追加
 
         return response;
-    }
-
-    public List<String> getTags() {
-        return tagRepository.findAll().stream().map(TagEntity::getName).collect(Collectors.toList());
     }
 
     public CardForSearchResponse getTagsAndNames() {
