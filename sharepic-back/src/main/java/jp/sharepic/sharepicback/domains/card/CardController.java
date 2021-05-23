@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jp.sharepic.sharepicback.domains.card.request.CardUploadRequest;
 import jp.sharepic.sharepicback.domains.card.response.CardForAccountResponse;
 import jp.sharepic.sharepicback.domains.card.response.CardForHomeResponse;
+import jp.sharepic.sharepicback.domains.card.response.CardForSearchResponse;
 import jp.sharepic.sharepicback.domains.card.response.CardResponse;
 import jp.sharepic.sharepicback.domains.user.UserInfo;
 
@@ -36,6 +37,11 @@ public class CardController {
     @GetMapping("/tags")
     public List<String> getTags() {
         return cardService.getTags();
+    }
+
+    @GetMapping("/tags-names")
+    public CardForSearchResponse getTagsAndNames() {
+        return cardService.getTagsAndNames();
     }
 
     @GetMapping("/home")

@@ -22,10 +22,13 @@ import org.springframework.stereotype.Component;
 
 import jp.sharepic.sharepicback.domains.card.response.CardForAccountResponse;
 import jp.sharepic.sharepicback.domains.card.response.CardForHomeResponse;
+import jp.sharepic.sharepicback.domains.card.response.CardForSearchResponse;
 import jp.sharepic.sharepicback.domains.relation.CardTagRelEntity;
 import jp.sharepic.sharepicback.domains.relation.CardTagRelRepository;
 import jp.sharepic.sharepicback.domains.tag.TagEntity;
 import jp.sharepic.sharepicback.domains.tag.TagRepository;
+import jp.sharepic.sharepicback.domains.user.UserEntity;
+import jp.sharepic.sharepicback.domains.user.UserRepository;
 import jp.sharepic.sharepicback.infra.s3.S3Service;
 
 @Component
@@ -38,6 +41,8 @@ public class CardService {
 
     @Autowired
     CardRepository cardRepository;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     TagRepository tagRepository;
     @Autowired
@@ -84,6 +89,11 @@ public class CardService {
 
     public List<String> getTags() {
         return tagRepository.findAll().stream().map(TagEntity::getName).collect(Collectors.toList());
+    }
+
+    public CardForSearchResponse getTagsAndNames() {
+        List<String> names = userRepository.findAll().stream().map(UserEntity::getName).collect(Collectors.toList());
+        return new CardForSearchResponse(getTags(), names);
     }
 
     public List<CardEntity> search(String tag, String freeword) {
