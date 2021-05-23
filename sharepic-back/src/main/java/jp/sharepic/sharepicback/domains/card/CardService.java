@@ -112,13 +112,23 @@ public class CardService {
 
         // 検索条件が両方空の場合結合する
         List<CardEntity> combinedResult = new ArrayList<>();
-        if (tag.isEmpty() && name.isEmpty() || !tag.isEmpty() && !name.isEmpty()) {
+        if (tag.isEmpty() && name.isEmpty()) {
             combinedResult.addAll(resultList1);
-            combinedResult.addAll(resultList2);
+            for (CardEntity card : resultList2) {
+                if (!combinedResult.contains(card)) {
+                    combinedResult.add(card);
+                }
+            }
         } else if (tag.isEmpty() && !name.isEmpty()) {
             combinedResult.addAll(resultList2);
         } else if (!tag.isEmpty() && name.isEmpty()) {
             combinedResult.addAll(resultList1);
+        } else if (!tag.isEmpty() && !name.isEmpty()) {
+            for (CardEntity card : resultList1) {
+                if (resultList2.contains(card)) {
+                    combinedResult.add(card);
+                }
+            }
         }
 
         return combinedResult;
