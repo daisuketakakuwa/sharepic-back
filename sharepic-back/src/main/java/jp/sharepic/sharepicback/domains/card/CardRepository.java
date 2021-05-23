@@ -16,7 +16,7 @@ public interface CardRepository extends JpaRepository<CardEntity, String>, JpaSp
     public Optional<CardEntity> findBySrc(@Param("src") String src);
 
     @Query(value = "SELECT DISTINCT card FROM CardEntity card " + "LEFT JOIN card.cardTagRelations relations "
-            + "LEFT JOIN relations.tag " + "WHERE card.postUser = :postUser ")
+            + "LEFT JOIN relations.tag " + "WHERE card.postUser = :postUser ORDER BY card.postDate DESC ")
 
     public List<CardEntity> findByPostUser(@Param("postUser") String postUser);
 
