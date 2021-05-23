@@ -41,8 +41,6 @@ public class CardService {
     @Value("${img_tmp_dir}")
     String imageTmpDir;
 
-    private static String NO_TAG = "※未指定";
-
     @Autowired
     CardRepository cardRepository;
     @Autowired
@@ -103,26 +101,24 @@ public class CardService {
         return new CardForSearchResponse(getTags(), names);
     }
 
-    public List<CardEntity> search(String tag, String freeword) {
+    public List<CardEntity> search(String tag, String name) {
 
         // 検索対象「タグ」
         List<CardEntity> resultList1 = tagRepository.findByName(tag).stream().map(TagEntity::getCardTagRelations)
                 .flatMap(Collection::stream).map(CardTagRelEntity::getCard).collect(Collectors.toList());
 
-        // 検索対象「投稿者名・説明」
-        List<CardEntity> resultList2 = cardRepository
-                .findAll(Specification.where(specs.containsPoster(freeword)).or(specs.containsDescription(freeword)));
+        // 検索対象「投稿者名」
+        List<CardEntity> resultList2 = cardRepository.findAll(Specification.where(specs.containsPoster(name)));
 
-        // result1とresult2の両方に含まれるもの
+        // 検索条件が両方空の場合結合する
         List<CardEntity> combinedResult = new ArrayList<>();
-        if (tag.isEmpty() || NO_TAG.equals(tag)) {
+        if (tag.isEmpty() && name.isEmpty() || !tag.isEmpty() && !name.isEmpty()) {
+            combinedResult.addAll(resultList1);
             combinedResult.addAll(resultList2);
-        } else {
-            for (CardEntity card : resultList1) {
-                if (resultList2.contains(card)) {
-                    combinedResult.add(card);
-                }
-            }
+        } else if (tag.isEmpty() && !name.isEmpty()) {
+            combinedResult.addAll(resultList2);
+        } else if (!tag.isEmpty() && name.isEmpty()) {
+            combinedResult.addAll(resultList1);
         }
 
         return combinedResult;

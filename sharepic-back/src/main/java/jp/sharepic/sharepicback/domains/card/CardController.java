@@ -55,8 +55,8 @@ public class CardController {
     }
 
     @GetMapping("/search")
-    public List<CardResponse> search(@RequestParam String tag, @RequestParam String freeword) {
-        return cardFactory.createCardResponses(cardService.search(tag, freeword));
+    public List<CardResponse> search(@RequestParam String tag, @RequestParam String name) {
+        return cardFactory.createCardResponses(cardService.search(tag, name));
     }
 
 }
