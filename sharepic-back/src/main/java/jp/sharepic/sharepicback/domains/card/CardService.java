@@ -5,11 +5,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -60,9 +64,12 @@ public class CardService {
     public List<CardForHomeResponse> home() {
         // タグ一覧を取得
         List<TagEntity> tagEntities = tagRepository.findAll();
+        // 更新日付の降順でソート
+        Set<TagEntity> sortedEntities = new TreeSet<>(Comparator.comparing(TagEntity::getUpdatedDate).reversed());
+        sortedEntities.addAll(tagEntities);
 
         List<CardForHomeResponse> responses = new ArrayList<>();
-        for (TagEntity tagEntity : tagEntities) {
+        for (TagEntity tagEntity : sortedEntities) {
             CardForHomeResponse response = new CardForHomeResponse();
             response.setTag(tagEntity.getName());
             // タグに紐づく写真を１枚選択
@@ -163,14 +170,18 @@ public class CardService {
 
         // Tagテーブル登録（新規タグの場合のみ登録する）
         for (String tagName : tags) {
-            if (!tagRepository.findByName(tagName).isPresent()) {
-                TagEntity tagEntity = new TagEntity();
-                tagEntity.setId(UUID.randomUUID().toString());
-                tagEntity.setName(tagName);
-                tagRepository.save(tagEntity);
+            // 既存タグは更新日付のみ更新する
+            TagEntity entity = tagRepository.findByName(tagName).orElse(null);
+            if (entity == null) {
+                entity = new TagEntity();
+                entity.setId(UUID.randomUUID().toString());
+                entity.setName(tagName);
                 System.out.println("TAGテーブル登録処理完了" + "【" + tagName + "】");
-
+            } else {
+                entity.setUpdatedDate(LocalDateTime.now());
+                System.out.println("TAGテーブル更新処理完了" + "【" + tagName + "】");
             }
+            tagRepository.save(entity);
         }
     }
 
